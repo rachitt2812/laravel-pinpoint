@@ -4,6 +4,7 @@ namespace Codaptive\LaravelPinpoint\Transport;
 
 use Aws\Pinpoint\PinpointClient;
 use Illuminate\Mail\Transport\Transport;
+use Illuminate\Support\Facades\Log;
 use Swift_Mime_SimpleMessage;
 
 class PinpointTransport extends Transport
@@ -74,6 +75,10 @@ class PinpointTransport extends Transport
             );
 
             $resultData = $result->get('MessageResponse');
+
+            foreach ($resultData['Result'] as $target => $messageResult) {
+                Log::debug('Pinpoint Message Result', $messageResult);
+            }
 
             $message->getHeaders()->addTextHeader('X-Pinpoint-Request-ID', $resultData['RequestId']);
 
