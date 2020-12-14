@@ -43,9 +43,6 @@ class PinpointTransport extends Transport
     {
         $this->beforeSendPerformed($message);
 
-        $from = $message->getFrom();
-        $fromAddress = array_keys($from);
-
         $toAddresses = $message->getTo();
 
         $addresses = [];
@@ -56,15 +53,6 @@ class PinpointTransport extends Transport
             ];
         }
 
-        logger('Sending Email via Pinpoint', [
-            'ApplicationId' => config('pinpoint.application_id'),
-            'FromAddress' => [
-                $from,
-                $fromAddress
-            ],
-            'Data' => $message->toString()
-        ]);
-
         try {
             $result = $this->pinpoint->sendMessages(
                 array_merge($this->options, [
@@ -73,7 +61,7 @@ class PinpointTransport extends Transport
                         'Addresses' => $addresses,
                         'MessageConfiguration' => [
                             'EmailMessage' => [
-                                'FromAddress' => \Safe\sprintf('%s <%s>', $from[$fromAddress[0]], $fromAddress[0]),
+                                'FromAddress' => \Safe\sprintf('%s <%s>', config('mail.from.name'), config('mail.from.address')),
                                 'RawEmail' => [
                                     'Data' => $message->toString()
                                 ]
