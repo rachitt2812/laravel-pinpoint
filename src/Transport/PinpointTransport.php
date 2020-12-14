@@ -56,6 +56,15 @@ class PinpointTransport extends Transport
             ];
         }
 
+        logger('Sending Email via Pinpoint', [
+            'ApplicationId' => config('pinpoint.application_id'),
+            'FromAddress' => [
+                $from,
+                $fromAddress
+            ],
+            'Data' => $message->toString()
+        ]);
+
         try {
             $result = $this->pinpoint->sendMessages(
                 array_merge($this->options, [
