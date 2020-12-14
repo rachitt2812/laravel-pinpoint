@@ -53,6 +53,12 @@ class PinpointTransport extends Transport
             ];
         }
 
+        logger('Sending Pinpoint Email', [
+            'Addresses' => $addresses,
+            'Data' => $message->toString(),
+            'Headers' => $message->getHeaders(),
+        ]);
+
         try {
             $result = $this->pinpoint->sendMessages(
                 array_merge($this->options, [
