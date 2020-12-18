@@ -55,7 +55,6 @@ class PinpointTransport extends Transport
 
         logger('Sending Pinpoint Email', [
             'Addresses' => $addresses,
-            'Data' => $message->toString(),
             'Headers' => $message->getHeaders(),
         ]);
 
