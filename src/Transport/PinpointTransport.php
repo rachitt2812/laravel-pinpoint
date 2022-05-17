@@ -57,6 +57,9 @@ class PinpointTransport extends Transport
             'Addresses' => $addresses,
             'Headers' => $message->getHeaders(),
         ]);
+        
+        $fromAddress = config('mail.from.address');
+        $fromName = config('mail.from.name');
 
         try {
             $result = $this->pinpoint->sendMessages(
@@ -66,7 +69,7 @@ class PinpointTransport extends Transport
                         'Addresses' => $addresses,
                         'MessageConfiguration' => [
                             'EmailMessage' => [
-                                'FromAddress' => \Safe\sprintf('%s <%s>', config('mail.from.name'), config('mail.from.address')),
+                                'FromAddress' => "${fromName} <${fromAddress}>",
                                 'RawEmail' => [
                                     'Data' => $message->toString()
                                 ]

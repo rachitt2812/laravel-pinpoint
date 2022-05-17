@@ -11,10 +11,15 @@ class PinpointServiceProvider extends MailServiceProvider
      *
      * @return void
      */
-    public function registerSwiftTransport()
+    public function registerIlluminateMailer()
     {
-        $this->app->singleton('swift.transport', function ($app) {
+        $this->app->singleton('mail.manager', function($app) {
             return new PinpointTransportManager($app);
+        });
+
+        // Copied from Illuminate\Mail\MailServiceProvider
+        $this->app->bind('mailer', function ($app) {
+            return $app->make('mail.manager')->mailer();
         });
     }
 

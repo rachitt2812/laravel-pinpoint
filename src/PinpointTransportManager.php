@@ -4,13 +4,13 @@ namespace Codaptive\LaravelPinpoint;
 
 use Aws\Pinpoint\PinpointClient;
 use Codaptive\LaravelPinpoint\Transport\PinpointTransport;
-use Illuminate\Mail\TransportManager;
+use Illuminate\Mail\MailManager;
 use Illuminate\Support\Arr;
 
-class PinpointTransportManager extends TransportManager
+class PinpointTransportManager extends MailManager
 {
-    protected function createPinpointDriver() {
-        $config = array_merge($this->config->get('pinpoint', []), [
+    protected function createPinpointTransport() {
+        $config = array_merge($this->app['config']->get('pinpoint', []), [
             'version' => 'latest',
         ]);
 
