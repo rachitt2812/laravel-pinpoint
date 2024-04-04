@@ -1,5 +1,5 @@
 {
-    "name": "codaptive/laravel-pinpoint",
+    "name": "amanch/laravel-pinpoint",
     "description": "AWS Pinpoint driver for Laravel",
     "homepage": "https://github.com/codaptive/laravel-pinpoint",
     "require": {
@@ -13,8 +13,8 @@
     "license": "MIT",
     "authors": [
         {
-            "name": "Richard Banks",
-            "email": "richard.banks@codaptive.io"
+            "name": "Aman Ch",
+            "email": "imponiaaman@gmail.com"
         }
     ],
     "minimum-stability": "dev",
