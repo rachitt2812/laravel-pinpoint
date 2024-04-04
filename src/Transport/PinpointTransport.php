@@ -3,11 +3,13 @@
 namespace Codaptive\LaravelPinpoint\Transport;
 
 use Aws\Pinpoint\PinpointClient;
-use Illuminate\Mail\Transport\Transport;
 use Illuminate\Support\Facades\Log;
-use Swift_Mime_SimpleMessage;
+use Symfony\Component\Mailer\Envelope;
+use Symfony\Component\Mailer\SentMessage;
+use Symfony\Component\Mailer\Transport\TransportInterface;
+use Symfony\Component\Mime\RawMessage;
 
-class PinpointTransport extends Transport
+class PinpointTransport implements TransportInterface
 {
     /**
      * The Amazon Pinpoint instance.
@@ -39,16 +41,17 @@ class PinpointTransport extends Transport
     /**
      * {@inheritdoc}
      */
-    public function send(Swift_Mime_SimpleMessage $message, &$failedRecipients = null)
+    public function send(RawMessage $message, Envelope $envelope = null): ?SentMessage
     {
-        $this->beforeSendPerformed($message);
+
+        $sentMsg = new SentMessage($message, $envelope);
 
         $toAddresses = $message->getTo();
 
         $addresses = [];
 
-        foreach ($toAddresses as $emailAddress => $name) {
-            $addresses[$emailAddress] = [
+        foreach ($toAddresses as $toAddress) {
+            $addresses[$toAddress->getAddress()] = [
                 'ChannelType' => 'EMAIL'
             ];
         }
@@ -57,7 +60,7 @@ class PinpointTransport extends Transport
             'Addresses' => $addresses,
             'Headers' => $message->getHeaders(),
         ]);
-        
+
         $fromAddress = config('mail.from.address');
         $fromName = config('mail.from.name');
 
@@ -85,13 +88,10 @@ class PinpointTransport extends Transport
 
             $message->getHeaders()->addTextHeader('X-Pinpoint-Request-ID', $resultData['RequestId']);
 
-            $this->sendPerformed($message);
-
-            return $this->numberOfRecipients($message);
+            return $sentMsg;
         } catch (\Exception $e) {
             report($e);
-
-            return 0;
+            return $sentMsg;
         }
     }
 
@@ -124,5 +124,16 @@ class PinpointTransport extends Transport
     public function setOptions(array $options)
     {
         return $this->options = $options;
+    }
+
+    /**
+     * Set the transmission options being used by the transport.
+     *
+     * @param  array  $options
+     * @return array
+     */
+    public function __toString()
+    {
+        return '';
     }
 }
